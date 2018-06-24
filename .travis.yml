@@ -9,10 +9,11 @@ branches:
 before_install:
   - sudo apt-get update
   - sudo apt-get install build-essential libavahi-compat-libdnssd-dev
-  - sudo npm install -g --unsafe-perm homebridge
+  - sudo npm install -g homebridge
 
 before_script:
   - "npm install -g homebridge-garage-door-wsensor"
+  - "cp config.sample.json .homebridge/config.json"
 
 script: "sudo homebridge & sleep 30; kill $!;"
 
