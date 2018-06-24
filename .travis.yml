@@ -7,17 +7,17 @@ branches:
     - master
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install build-essential libavahi-compat-libdnssd-dev git
-  - sudo apt-get install npm
-  - sudo npm config set strict-ssl false
+  - apt-get update
+  - apt-get install build-essential libavahi-compat-libdnssd-dev git
+  - apt-get install npm
+  - npm config set strict-ssl false
   - nvm install 8.11.3
   - nvm use 8.11.3
-  - sudo npm install -g --unsafe-perm homebridge
+  - npm install -g --unsafe-perm homebridge
 
 before_script:
-  - "sudo npm install -g homebridge-garage-door-wsensor"
-  - "sudo cp config.sample.json .homebridge/config.json"
+  - "npm install -g homebridge-garage-door-wsensor"
+  - "cp config.sample.json .homebridge/config.json"
 
-script: "sudo homebridge & sleep 30; kill $!;"
+script: "homebridge & sleep 30; kill $!;"
 
