@@ -16,6 +16,7 @@ before_install:
 
 before_script:
   - "npm install -g homebridge-garage-door-wsensor"
+  - "mkdir .homebridge"
   - "cp config.sample.json .homebridge/config.json"
 
 script: "homebridge & sleep 30; kill $!;"
