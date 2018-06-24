@@ -1,0 +1,18 @@
+language: node_js
+
+node_js: 8
+
+branches:
+  only:
+    - master
+
+before_install:
+  - sudo apt-get update
+  - sudo apt-get install build-essential libavahi-compat-libdnssd-dev
+  - sudo npm install -g --unsafe-perm homebridge
+
+before_script:
+  - "npm install -g homebridge-garage-door-wsensor"
+
+script: "sudo homebridge & sleep 30; kill $!;"
+
