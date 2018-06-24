@@ -11,8 +11,8 @@ Homebridge works best I have found when run in sudo.
 ### Sample Config
 
 Config to be placed in .homebridge/config.json
-If you run homebridge from sudo, place config in /root/.homebridge/config.json
-If you run homebridge without sudo, place config in /home/pi/.homebridge/config.json
+* If you run homebridge from sudo, place config in /root/.homebridge/config.json
+* If you run homebridge without sudo, place config in /home/pi/.homebridge/config.json
 
 ```json
 {
