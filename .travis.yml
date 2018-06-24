@@ -11,6 +11,7 @@ before_install:
   - sudo apt-get install build-essential libavahi-compat-libdnssd-dev git
   - sudo apt-get install npm
   - sudo npm config set strict-ssl false
+  - sudo nvm use 8
   - sudo npm install -g --unsafe-perm homebridge
 
 before_script:
