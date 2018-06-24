@@ -1,0 +1,18 @@
+{
+  "bridge": {
+      "name": "Garage Homebridge",
+      "username": "CC:22:3D:E3:CE:30",
+      "port": 51826,
+      "pin":"031-45-154",
+      "manufacturer": "@nfarina",
+      "model": "Homebridge",
+      "serialNumber": "0.4.20"
+  },
+  "description": "The garage home bridge",
+  "accessories": [{
+    "accessory": "Garage Door Opener",
+    "name": "Garage Door",
+    "doorRelayPin": 11,
+    "doorSensorPin": 10
+  }]
+}
