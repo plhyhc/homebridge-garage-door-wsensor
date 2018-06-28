@@ -21,7 +21,7 @@ before_install:
   - make
   - sudo make install
   - sudo adduser $USER gpio
-  - cd ~
+  - cd ../
 
 before_script:
   - "npm install -g homebridge-garage-door-wsensor"
