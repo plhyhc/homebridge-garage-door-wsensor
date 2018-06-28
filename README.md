@@ -39,6 +39,11 @@ Config to be placed in .homebridge/config.json
 
 ```
 sudo apt-get install libavahi-compat-libdnssd-dev
+git clone git://github.com/quick2wire/quick2wire-gpio-admin.git
+cd quick2wire-gpio-admin
+make
+sudo make install
+sudo adduser $USER gpio
 sudo npm install -g --unsafe-perm homebridge
 sudo npm install -g homebridge-garage-door-wsensor
 sudo homebridge
