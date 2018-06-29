@@ -22,6 +22,13 @@ before_install:
   - sudo make install
   - sudo adduser $USER gpio
   - cd ../
+  - sudo mkdir /sys
+  - sudo mkdir /sys/class
+  - sudo mkdir /sys/class/gpio
+  - sudo mkdir /sys/class/gpio/gpio15
+  - sudo echo "0" > /sys/class/gpio/gpio15/value
+  - sudo mkdir /sys/class/gpio/gpio17
+  - sudo echo "0" > /sys/class/gpio/gpio17/value
 
 before_script:
   - "npm install -g homebridge-garage-door-wsensor"
