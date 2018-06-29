@@ -22,7 +22,6 @@ before_install:
   - sudo make install
   - sudo adduser $USER gpio
   - cd ../
-  - sudo mkdir /sys
   - sudo mkdir /sys/class
   - sudo mkdir /sys/class/gpio
   - sudo mkdir /sys/class/gpio/gpio15
