@@ -32,7 +32,7 @@ Rename config.sample.json to config.json and place in .homebridge/config.json
     "doorSensorPin": 16,
     "invertDoorState": false,
     "invertSensorState": false,
-    "duration_ms": 500  //number of milliseconds relay will close the circuit
+    "duration_ms": 500
   }]
 }
 ```
