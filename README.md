@@ -41,7 +41,7 @@ Rename config.sample.json to config.json and place in .homebridge/config.json
 
 ```
 sudo npm install -g --unsafe-perm homebridge
-sudo npm install -g homebridge-garage-door-wsensor
+sudo npm install -g --unsafe-perm homebridge-garage-door-wsensor
 ```
 Rename config.sample.json to config.json and place in .homebridge/config.json
 

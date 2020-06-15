@@ -67,7 +67,6 @@ GarageDoorOpener.prototype.checkSensor = function (callback) {
 
 GarageDoorOpener.prototype.readSensorState = function () {
 	var val = this.gpioSensorVal(rpio.read(this.doorSensorPin));
-	console.log('readSensorState: ' + val);
 	return val == rpio.HIGH;
 }
 
@@ -76,7 +75,6 @@ GarageDoorOpener.prototype.setState = function (val) {
 }
 
 GarageDoorOpener.prototype.setDoorOpen = function (newState, callback) {
-	console.log('setDoorOpen: ' + newState);
 	if (this.timerid !== -1) {
 		clearTimeout(this.timerid);
 		this.timerid = -1;
