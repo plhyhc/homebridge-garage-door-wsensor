@@ -1,7 +1,7 @@
 {
   "bridge": {
       "name": "Garage Homebridge",
-      "username": "CC:22:3D:E3:CE:30",
+      "username": "CC:22:3D:E3:CE:34",
       "port": 51826,
       "pin":"031-45-154",
       "manufacturer": "@nfarina",
@@ -13,6 +13,9 @@
     "accessory": "Garage Door Opener",
     "name": "Garage Door",
     "doorRelayPin": 11,
-    "doorSensorPin": 10
+    "doorSensorPin": 16,
+    "invertDoorState": false,
+    "invertSensorState": false,
+    "duration_ms": 500
   }]
 }

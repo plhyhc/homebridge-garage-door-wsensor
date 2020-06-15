@@ -23,17 +23,13 @@
   "_shasum": "73e7b822fe3761c305958587b2135cf9c3d3dd3e",
   "_spec": "homebridge-garage-door-wsensor",
   "_where": "/home/pi",
-  "author": {
-    "name": "Josh Kraft",
-    "email": "josh.h.kraft@gmail.com",
-    "url": "http://www.joshkraft.com"
-  },
+  "author": "plhyhc",
   "bugs": {
     "url": "https://github.com/plhyhc/homebridge-garage-door-wsensor/issues"
   },
   "bundleDependencies": false,
   "dependencies": {
-    "pi-gpio": "^0.0.8"
+    "rpio": "^2.1.0"
   },
   "deprecated": false,
   "description": "Hombridge plugin for Garage Door Opener - Raspberry Pi",
@@ -58,5 +54,5 @@
     "type": "git",
     "url": "git+https://github.com/plhyhc/homebridge-garage-door-wsensor.git"
   },
-  "version": "1.0.3"
+  "version": "2.0.0"
 }

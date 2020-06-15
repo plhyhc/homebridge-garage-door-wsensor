@@ -1,16 +1,17 @@
 # Homebridge Pi Garage Door Opener With Sensor
 
 
-This is a [homebridge](https://github.com/nfarina/homebridge) plugin to make a Raspberry Pi connected with a Relay Board into a Garage Door Opener, via the Home app on iOS using Homekit.  It uses a magnetic switch to determine the state of the garage door, open or closed. Tested with iOS 11.
+This is a [homebridge](https://github.com/nfarina/homebridge) plugin to make a Raspberry Pi connected with a Relay Board into a Garage Door Opener, via the Home app on iOS using Homekit.  It uses a magnetic switch to determine the state of the garage door, open or closed. The wires from the Relay go into the same ports as the wired button for the garage door. When the Relay closes the circuit it acts like the button was pushed. Tested with iOS 13.
 
-Homebridge works best I have found when run in sudo.
+
+### Start on boot
+
+Have the "homebridge" command run at boot.
 
 
 ### Sample Config
 
-Config to be placed in .homebridge/config.json
-* If you run homebridge from sudo, place config in /root/.homebridge/config.json
-* If you run homebridge without sudo, place config in /home/pi/.homebridge/config.json
+Rename config.sample.json to config.json and place in .homebridge/config.json
 
 ```json
 {
@@ -28,7 +29,10 @@ Config to be placed in .homebridge/config.json
     "accessory": "Garage Door Opener",
     "name": "Garage Door",
     "doorRelayPin": 11,
-    "doorSensorPin": 10
+    "doorSensorPin": 16,
+    "invertDoorState": false,
+    "invertSensorState": false,
+    "duration_ms": 500  //number of milliseconds relay will close the circuit
   }]
 }
 ```
@@ -36,13 +40,14 @@ Config to be placed in .homebridge/config.json
 ### How to Setup
 
 ```
-sudo apt-get install libavahi-compat-libdnssd-dev
-git clone git://github.com/quick2wire/quick2wire-gpio-admin.git
-cd quick2wire-gpio-admin
-make
-sudo make install
-sudo adduser $USER gpio
 sudo npm install -g --unsafe-perm homebridge
 sudo npm install -g homebridge-garage-door-wsensor
-sudo homebridge
+```
+Rename config.sample.json to config.json and place in .homebridge/config.json
+
+
+### How to Start
+Run the following command
+```
+homebridge
 ```

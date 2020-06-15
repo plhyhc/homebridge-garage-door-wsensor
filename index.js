@@ -1,116 +1,119 @@
-var gpio = require('pi-gpio');
-let Service, Characteristic, TargetDoorState, CurrentDoorState;
-const OFF = true;
-const ON = false;
+var Service, Characteristic, TargetDoorState, CurrentDoorState;
+var rpio = require('rpio');
 
-module.exports = function(homebridge) {
-  Service = homebridge.hap.Service;
-  Characteristic = homebridge.hap.Characteristic;
-  TargetDoorState = Characteristic.TargetDoorState;
-  CurrentDoorState = Characteristic.CurrentDoorState;
-  DoorState = homebridge.hap.Characteristic.CurrentDoorState;
-  homebridge.registerAccessory('homebridge-garage-door-opener', 'Garage Door Opener', GarageDoorOpener);
-};
+module.exports = function (homebridge) {
+	Service = homebridge.hap.Service;
+	Characteristic = homebridge.hap.Characteristic;
+    TargetDoorState = Characteristic.TargetDoorState;
+    CurrentDoorState = Characteristic.CurrentDoorState;
+    DoorState = homebridge.hap.Characteristic.CurrentDoorState;
+	homebridge.registerAccessory('homebridge-garage-door-wsensor', 'Garage Door Opener', GarageDoorOpener);
+}
 
-class GarageDoorOpener {
-  constructor(log, config) {
+function GarageDoorOpener(log, config) {
     this.log = log;
     this.name = config.name;
     this.doorRelayPin = config.doorRelayPin;
     this.doorSensorPin = config.doorSensorPin;
-    this.checkSensor();
     this.currentDoorState = CurrentDoorState.CLOSED;
     this.targetDoorState = TargetDoorState.CLOSED;
-    this.DoorState = 1;
-    this.pinChange = 0;
-  }
+    this.invertDoorState = defaultVal(config["invertDoorState"], false);
+    this.invertSensorState = defaultVal(config['invertSensorState'], false);
+	this.default = defaultVal(config["default_state"], false);
+	this.duration = defaultVal(config["duration_ms"], 0);
+    this.doorState = 0;
+	this.sensorChange = 0;
+	this.service = null;
 
-  identify(callback) {
-    this.log('Identify requested!');
-    callback(null);
-  }
+    if (!this.doorRelayPin) throw new Error("You must provide a config value for 'doorRelayPin'.");
+    if (!this.doorSensorPin) throw new Error("You must provide a config value for 'doorSensorPin'.");
+	if (!is_int(this.duration)) throw new Error("The config value 'duration' must be an integer number of milliseconds.");
 
-  openCloseGarage(callback) {
-    var self = this;
-    gpio.open(self.doorRelayPin, 'output', function() {
-          gpio.write(self.doorRelayPin, 1, function() {
-              // SET VALUE 1 TO SET RELAY HIGH
-          });
-      });
-    setTimeout(() => {
-      gpio.open(self.doorRelayPin, 'output', function() {
-            gpio.write(self.doorRelayPin, 0, function() {
-                // SET VALUE 0 TO SET RELAY LOW
-            });
-        });
-        }, 700);
-  }
+    this.log("Creating a garage door relay named '%s', initial state: %s", this.name, (this.invertDoorState ? "OPEN" : "CLOSED"));
+    rpio.open(this.doorRelayPin, rpio.OUTPUT, this.gpioDoorVal(this.invertDoorState));
+	rpio.open(this.doorSensorPin, rpio.OUTPUT, this.gpioSensorVal(this.invertSensorState));
+	this.checkSensor(e => {});
+}
 
-  checkSensor(){
-    var self = this;
-    setTimeout(function(){
-      gpio.open(self.doorSensorPin, 'input', function() {
-        gpio.read(self.doorSensorPin, function(gself,value) {
-          if(value === 1){
-              if(self.DoorState != value){
-                self.pinChange = 1;
-                self.service.setCharacteristic(TargetDoorState, TargetDoorState.OPEN);
-              }
-              self.pinChange = 0;
-              self.service.setCharacteristic(CurrentDoorState, CurrentDoorState.OPEN);
-              self.targetDoorState = 0;
-          } else {
-            if(self.DoorState != value){
-              self.pinChange = 1;
-              self.service.setCharacteristic(TargetDoorState, TargetDoorState.CLOSED);
-            }
-            self.pinChange = 0;
-            self.service.setCharacteristic(CurrentDoorState, CurrentDoorState.CLOSED);
-            self.targetDoorState = 1;
-          }
-          self.DoorState = value;
-          self.checkSensor();
-        });
-      });
-    },500);
-  }
-
-  getServices() {
-    const informationService = new Service.AccessoryInformation();
-
-    informationService
-      .setCharacteristic(Characteristic.Manufacturer, 'Encore Dev Labs')
-      .setCharacteristic(Characteristic.Model, 'Kraft Garage Door Opener')
-      .setCharacteristic(Characteristic.SerialNumber, 'Raspberry Pi');
-
+GarageDoorOpener.prototype.getServices = function () {
     this.service = new Service.GarageDoorOpener(this.name, this.name);
     this.service.setCharacteristic(TargetDoorState, TargetDoorState.CLOSED);
-    this.service.setCharacteristic(CurrentDoorState, CurrentDoorState.CLOSED);
+	this.service.setCharacteristic(CurrentDoorState, CurrentDoorState.CLOSED);
+	this.service.getCharacteristic(CurrentDoorState)
+		.on('get', this.getSensorStatus.bind(this))
+	this.service.getCharacteristic(TargetDoorState)
+		.on('get', this.getSensorStatus.bind(this))
+		.on('set', this.setDoorOpen.bind(this));
+	return [this.service];
+}
 
-    this.service.getCharacteristic(TargetDoorState)
-      .on('get', (callback) => {
-        callback(null, this.targetDoorState);
-      })
-      .on('set', (value, callback) => {
-        this.targetDoorState = value;
-        if (this.targetDoorState === TargetDoorState.OPEN) {
-          if(this.pinChange == 0 ){
-            this.openCloseGarage();
-          }
-        } else if (this.targetDoorState === TargetDoorState.CLOSED) {
-          if(this.pinChange == 0 ){
-            this.openCloseGarage();
-          }
-        }
-        this.pinChange = 0;
-        callback();
-      });
-    this.service
-      .getCharacteristic(Characteristic.Name)
-      .on('get', callback => {
-        callback(null, this.name);
-      });
+GarageDoorOpener.prototype.getSensorStatus = function (callback) {
+	callback(null, this.readSensorState());
+}
 
-    return [informationService, this.service];
-  }
+GarageDoorOpener.prototype.checkSensor = function (callback) {
+	setTimeout(e => {
+		this.doorState = this.readSensorState();
+		if (this.doorState !== this.sensorChange){
+			this.service.getCharacteristic(TargetDoorState).updateValue(this.doorState);
+			this.service.getCharacteristic(CurrentDoorState).updateValue(this.doorState);
+			this.sensorChange = this.doorState;
+		}
+		this.checkSensor(callback);
+	}, 500);
+
+	callback(null);
+}
+
+GarageDoorOpener.prototype.readSensorState = function () {
+	var val = this.gpioSensorVal(rpio.read(this.doorSensorPin));
+	console.log('readSensorState: ' + val);
+	return val == rpio.HIGH;
+}
+
+GarageDoorOpener.prototype.setState = function (val) {
+	rpio.write(this.doorRelayPin, this.gpioDoorVal(val));
+}
+
+GarageDoorOpener.prototype.setDoorOpen = function (newState, callback) {
+	console.log('setDoorOpen: ' + newState);
+	if (this.timerid !== -1) {
+		clearTimeout(this.timerid);
+		this.timerid = -1;
+	}
+
+	this.setState(newState);
+
+	if (this.duration > 0) {
+		this.timerid = setTimeout(this.timeOutCB, this.duration, this);
+	}
+
+	callback(null);
+}
+
+GarageDoorOpener.prototype.timeOutCB = function (o) {
+	o.setState(0);
+	o.timerid = -1;
+}
+
+GarageDoorOpener.prototype.gpioSensorVal = function (val) {
+	if (!this.invertSensorState) val = !val;
+	return val ? rpio.HIGH : rpio.LOW;
+}
+
+GarageDoorOpener.prototype.gpioDoorVal = function (val) {
+	if (this.invertDoorState) val = !val;
+	return val ? rpio.HIGH : rpio.LOW;
+}
+
+var is_int = function (n) {
+	return n % 1 === 0;
+}
+
+var is_defined = function (v) {
+	return typeof v !== 'undefined';
+}
+
+var defaultVal = function (v, dflt) {
+	return is_defined(v) ? v : dflt;
 }
