@@ -3,11 +3,20 @@
 
 This is a [homebridge](https://github.com/nfarina/homebridge) plugin to make a Raspberry Pi connected with a Relay Board into a Garage Door Opener, via the Home app on iOS using Homekit.  It uses a magnetic switch to determine the state of the garage door, open or closed. The wires from the Relay go into the same ports as the wired button for the garage door. When the Relay closes the circuit it acts like the button was pushed. Tested with iOS 13.
 
+### How to Setup
 
-### Start on boot
+```
+sudo npm install -g --unsafe-perm homebridge
+sudo npm install -g --unsafe-perm homebridge-garage-door-wsensor
+```
+Rename config.sample.json to config.json and place in .homebridge/config.json
 
-Have the "homebridge" command run at boot.
 
+### How to Start
+Run the following command
+```
+homebridge
+```
 
 ### Sample Config
 
@@ -37,17 +46,16 @@ Rename config.sample.json to config.json and place in .homebridge/config.json
 }
 ```
 
-### How to Setup
 
-```
-sudo npm install -g --unsafe-perm homebridge
-sudo npm install -g --unsafe-perm homebridge-garage-door-wsensor
-```
-Rename config.sample.json to config.json and place in .homebridge/config.json
+### Start on boot
+
+Have the "homebridge" command run at boot.
+- Enter command "sudo raspi-config" 
+- Select "Boot Options"
+- Select "B1 Desktop / CLI"
+- Select "B2 Console AutoLogin"
+- Confirm and Finish
+- Edit ~/.bashrc file. At the very end of the file add the command "homebridge". This command will be executed at boot up after auto-login as pi user.
 
 
-### How to Start
-Run the following command
-```
-homebridge
-```
+
