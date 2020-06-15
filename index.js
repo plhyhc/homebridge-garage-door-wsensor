@@ -80,7 +80,7 @@ GarageDoorOpener.prototype.setDoorOpen = function (newState, callback) {
 		this.timerid = -1;
 	}
 
-	this.setState(newState);
+	this.setState(1);
 
 	if (this.duration > 0) {
 		this.timerid = setTimeout(this.timeOutCB, this.duration, this);
