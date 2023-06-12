@@ -96,7 +96,7 @@ GarageDoorOpener.prototype.timeOutCB = function (o) {
 }
 
 GarageDoorOpener.prototype.gpioSensorVal = function (val) {
-	if (!this.invertSensorState) val = !val;
+	if (this.invertSensorState) val = !val;
 	return val ? rpio.HIGH : rpio.LOW;
 }
 
@@ -105,7 +105,7 @@ GarageDoorOpener.prototype.gpioDoorVal = function (val) {
 	return val ? rpio.HIGH : rpio.LOW;
 }
 
-GarageDoorOpener.prototype.translatePullConfig(val)
+GarageDoorOpener.prototype.translatePullConfig = function(val)
 {
 	if (val == "up") return rpio.PULL_UP;
 	else if (val == "down") return rpio.PULL_DOWN;
