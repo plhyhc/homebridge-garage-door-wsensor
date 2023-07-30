@@ -1,7 +1,7 @@
 # Homebridge Pi Garage Door Opener With Sensor
 
 
-This is a [homebridge](https://github.com/nfarina/homebridge) plugin to make a Raspberry Pi connected with a Relay Board into a Garage Door Opener, via the Home app on iOS using Homekit.  It uses a magnetic switch to determine the state of the garage door, open or closed. The wires from the Relay go into the same ports as the wired button for the garage door. When the Relay closes the circuit it acts like the button was pushed. Tested with iOS 13.
+This is a [homebridge](https://github.com/nfarina/homebridge) plugin to make a Raspberry Pi connected with a Relay Board into a Garage Door Opener, via the Home app on iOS using Homekit.  It uses a magnetic switch to determine the state of the garage door, open or closed. The wires from the Relay go into the same ports as the wired button for the garage door. When the Relay closes the circuit it acts like the button was pushed.
 
 ### How to Setup
 
