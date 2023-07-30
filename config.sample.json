@@ -16,7 +16,7 @@
     "doorSensorPin": 16,
     "invertDoorState": false,
     "invertSensorState": false,
-    "input_pull": "off",          // options are "up", "down" or "off"
+    "input_pull": "off",
     "duration_ms": 500
   }]
 }
