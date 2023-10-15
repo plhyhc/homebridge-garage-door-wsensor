@@ -1,4 +1,3 @@
-garage:/var/lib/homebridge/node_modules/homebridge-garage-door-wsensor# cat index.js
 var Service, Characteristic, TargetDoorState, CurrentDoorState;
 var rpio = require('rpio');
 
