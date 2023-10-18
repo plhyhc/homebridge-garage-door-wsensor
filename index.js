@@ -68,7 +68,7 @@ GarageDoorOpener.prototype.checkSensor = function (callback) {
 
 GarageDoorOpener.prototype.readSensorState = function () {
 	var val = this.gpioSensorVal(rpio.read(this.doorSensorPin));
-	return val == rpio.HIGH;
+	return val == rpio.HIGH?CurrentDoorState.CLOSED:CurrentDoorState.OPEN;
 }
 
 GarageDoorOpener.prototype.setState = function (val) {
@@ -76,6 +76,20 @@ GarageDoorOpener.prototype.setState = function (val) {
 }
 
 GarageDoorOpener.prototype.setDoorOpen = function (newState, callback) {
+        nowState = this.readSensorState();
+    	this.log("Requesting new state %s, current state %s", newState, nowState);
+        if (newState == nowState) {
+    		this.log("Already in requested state, doing nothing.");
+		callback(null);
+		return;
+	}
+	if (newState = TargetDoorState.CLOSED) {
+		this.service.getCharacteristic(TargetDoorState).updateValue(TargetDoorState.OPEN);
+		this.service.getCharacteristic(CurrentDoorState).updateValue(CurrentDoorState.OPENING);
+        } else if (newState == TargetDoorState.OPEN) {
+		this.service.getCharacteristic(TargetDoorState).updateValue(TargetDoorState.CLOSED);
+		this.service.getCharacteristic(CurrentDoorState).updateValue(CurrentDoorState.CLOSING);
+        }
 	if (this.timerid !== -1) {
 		clearTimeout(this.timerid);
 		this.timerid = -1;
